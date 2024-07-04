@@ -12,6 +12,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "antd": "^5.19.0",
     "flowbite-react": "^0.10.1",
     "next": "14.2.4",
     "react": "^18",
