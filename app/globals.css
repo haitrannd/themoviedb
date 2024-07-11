@@ -31,3 +31,24 @@ body {
     text-wrap: balance;
   }
 }
+
+@layer components {
+  .card {
+    width: calc((100% - 4rem) / 5);
+
+    @media (max-width: 1400px) {
+      width: calc((100% - 2rem) / 4);
+    }
+    @media (max-width: 1024px) {
+      width: calc((100% - 2rem) / 3);
+    }
+
+    @media (max-width: 768px) {
+      width: calc((100% - 1rem) / 2);
+    }
+
+    @media (max-width: 480px) {
+      width: 100%;
+    }
+  }
+}
