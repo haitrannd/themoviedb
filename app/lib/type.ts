@@ -63,7 +63,10 @@ export type MovieInfo = {
 };
 
 export type MovieListing = {
-  results: [];
+  page: number;
+  results: MovieInfo[];
+  total_pages: number;
+  total_results: number;
 };
 
 export type ApiResponse = {

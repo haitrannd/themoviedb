@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { NextRequestQueryType, MovieVideo } from "@/app/lib/type";
 
-export async function getMovieList(type: string) {
+export async function getMovieList(type: string, page = 1) {
   let api = "";
 
   switch (type) {
@@ -21,6 +21,8 @@ export async function getMovieList(type: string) {
       api = `https://api.themoviedb.org/3/movie/now_playing`;
       break;
   }
+
+  api += `?page=${page}`;
 
   const options: object = {
     method: "GET",
