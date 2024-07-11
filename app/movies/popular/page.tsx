@@ -1,9 +1,9 @@
-import MovieTabs from "./components/MovieTabs";
+import MovieList from "@/app/components/MovieList";
 
 export default async function Home() {
   return (
     <>
-      <MovieTabs />
+      <MovieList />
     </>
   );
 }

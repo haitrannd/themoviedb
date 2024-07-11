@@ -1,14 +1,17 @@
 "use client";
 
-import useTmdbContext from "@/app/hooks/useTmdbContext";
 import { Button, Card, Label, TextInput } from "flowbite-react";
-import React, { FormEvent } from "react";
+import React, { FormEvent, useRef } from "react";
 import { setSession } from "@/app/lib/services";
 import { message } from "antd";
 import { getSessionId } from "@/app/lib/auth";
+import { useAppStore } from "@/app/lib/hooks";
+import { update } from "@/app/lib/features/user/userSlice";
 
 export default function UserLogin() {
-  const { dispatch } = useTmdbContext();
+  const store = useAppStore();
+  const initialized = useRef(false);
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -16,19 +19,13 @@ export default function UserLogin() {
     const email = formData.get("email")?.toString();
     const pass = formData.get("password")?.toString();
     if (email && pass) {
-      // dispatch({
-      //   type: "LOGIN",
-      //   payload: null
-      // });
-      // await setSession('1');
-
       const sessionData = await getSessionId(email, pass);
       if (!sessionData.isError) {
-        message.success(sessionData.message, 3);
-        dispatch({
-          type: "LOGIN",
-          payload: null,
-        });
+        message.success("Login successful.", 3);
+        if (!initialized.current) {
+          store.dispatch(update(true));
+          initialized.current = true;
+        }
         await setSession(sessionData.data.session_id);
       } else {
         message.error(sessionData.data.status_message, 5);

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Navigation from "./components/Navigation";
-import { TmdbProvider } from "./contexts/TmdbProvider";
+import StoreProvider from "./StoreProvider";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -19,14 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className}`}>
-        <TmdbProvider>
+        <StoreProvider>
           <Navigation />
           <main>
-            <div className="h-screen overflow-auto py-24 p-10 md:p-24">
+            <div className="h-screen overflow-auto py-24 p-10 md:p-24 bg-white">
               {children}
             </div>
           </main>
-        </TmdbProvider>
+        </StoreProvider>
       </body>
     </html>
   );
