@@ -6,13 +6,15 @@ export async function middleware(request: NextRequest) {
   const session = await getSession();
 
   if (!session.isLoggedIn) {
-    if (request.nextUrl.pathname.startsWith("/user/profile")) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    if (request.nextUrl.pathname.startsWith("/user/logout")) {
+    if (
+      request.nextUrl.pathname.startsWith("/user/profile") ||
+      request.nextUrl.pathname.startsWith("/user/logout") ||
+      request.nextUrl.pathname.startsWith("/movies/popular")
+    ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
+
   if (session.isLoggedIn) {
     if (request.nextUrl.pathname.startsWith("/user/login")) {
       return NextResponse.redirect(new URL("/user/profile", request.url));
