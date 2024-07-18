@@ -34,7 +34,6 @@ export default function MovieList() {
         target.scrollHeight - (target.scrollTop + target.clientHeight)
       );
       if (reachedBottom <= 1) {
-        console.log("end");
         store.dispatch(fetchMovie(currentPage + 1));
         store.dispatch(updateCurrentPage(currentPage + 1));
       }
@@ -50,8 +49,8 @@ export default function MovieList() {
         onScroll={handleOnScroll}
       >
         {data &&
-          data.results.map((movie: MovieInfo) => (
-            <div key={movie.id} className="card">
+          data.results.map((movie: MovieInfo, index: number) => (
+            <div key={`${index}_${movie.id}`} className="card">
               <MovieCard movieData={movie} />
             </div>
           ))}

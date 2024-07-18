@@ -22,7 +22,7 @@ export default function RootLayout({
         <StoreProvider>
           <Navigation />
           <main>
-            <div className="h-screen overflow-auto py-24 p-10 md:p-24 bg-white">
+            <div className="h-screen overflow-auto py-24 px-5 md:p-24 bg-white">
               {children}
             </div>
           </main>

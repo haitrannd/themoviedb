@@ -38,7 +38,7 @@ export default function Navigation() {
         >
           <NavbarBrand as={Link} href="/">
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-              theMovieDB.
+              TheMovieDB.
             </span>
           </NavbarBrand>
 
@@ -58,6 +58,23 @@ export default function Navigation() {
             </Dropdown>
             <Navbar.Toggle />
           </div>
+
+          <NavbarCollapse>
+            <NavbarLink
+              as={Link}
+              href="/"
+              className="text-white hover:text-amber-400 md:hover:text-amber-400 transition-all"
+            >
+              About us
+            </NavbarLink>
+            <NavbarLink
+              as={Link}
+              href="/"
+              className="text-white hover:text-amber-400 md:hover:text-amber-400 transition-all"
+            >
+              FAQ
+            </NavbarLink>
+          </NavbarCollapse>
         </Navbar>
       </>
     );
@@ -66,12 +83,12 @@ export default function Navigation() {
   return (
     <>
       <Navbar
-        className="w-full fixed top-0 px-10 sm:px-24 bg-cyan-700 z-10"
+        className="w-full fixed top-0 px-5 sm:px-24 bg-cyan-700 z-10"
         fluid
       >
         <NavbarBrand as={Link} href="/">
           <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-            theMovieDB.
+            TheMovieDB.
           </span>
         </NavbarBrand>
 
@@ -94,7 +111,7 @@ export default function Navigation() {
               </Dropdown.Item>
             </>
           </Dropdown>
-          <Navbar.Toggle />
+          <Navbar.Toggle className="ml-4 text-white" />
         </div>
 
         <NavbarCollapse>
@@ -104,6 +121,27 @@ export default function Navigation() {
             className="text-white hover:text-amber-400 md:hover:text-amber-400 transition-all"
           >
             Popular movies
+          </NavbarLink>
+          <NavbarLink
+            as={Link}
+            href="/user/submit-movie"
+            className="text-white hover:text-amber-400 md:hover:text-amber-400 transition-all"
+          >
+            Submit movie
+          </NavbarLink>
+          <NavbarLink
+            as={Link}
+            href="/about-us"
+            className="text-white hover:text-amber-400 md:hover:text-amber-400 transition-all"
+          >
+            About us
+          </NavbarLink>
+          <NavbarLink
+            as={Link}
+            href="/faq"
+            className="text-white hover:text-amber-400 md:hover:text-amber-400 transition-all"
+          >
+            FAQ
           </NavbarLink>
         </NavbarCollapse>
       </Navbar>
