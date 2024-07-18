@@ -3,6 +3,7 @@
 import { Button, Card } from "flowbite-react";
 import { MovieInfo } from "../lib/type";
 import { IoIosArrowForward } from "react-icons/io";
+import Link from "next/link";
 
 type Props = {
   movieData: MovieInfo;
@@ -32,7 +33,7 @@ export default function MovieCard(props: Props) {
             {movieData.overview}
           </p>
           <Button>
-            Detail
+            <Link href={`/movie/${movieData.id}`}>Detail</Link>
             <IoIosArrowForward className="h-full ml-4" />
           </Button>
         </Card>

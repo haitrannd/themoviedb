@@ -16,6 +16,8 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
+  blacklist: ["movie"],
+  timeout: 20,
 };
 
 const reducer = combineReducers({
@@ -32,7 +34,6 @@ export const makeStore = () => {
       getDefaultMiddleware({
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-          // ignoredActions: [REHYDRATE, REGISTER],
         },
       }),
   });
