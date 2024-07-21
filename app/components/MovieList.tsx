@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppSelector, useAppStore } from "../lib/hooks";
-import { MovieInfo } from "../lib/type";
+import { MovieInfo, MovieListing } from "../lib/type";
 import {
   clearState,
   fetchMovie,
@@ -10,15 +10,36 @@ import {
 } from "../lib/features/movie/movieSlice";
 import MovieCard from "./MovieCard";
 
-export default function MovieList() {
-  const { data, currentPage } = useAppSelector((state) => state.movie);
+type Props = {
+  type: string;
+};
+
+export default function MovieList(props: Props) {
+  const { type } = props;
+  const { movies, popularMovies } = useAppSelector((state) => state.movie);
+  const [moviesData, setMoviesData] = useState<{
+    data: MovieListing | null;
+    currentPage: number;
+  }>({
+    data: null,
+    currentPage: 1,
+  });
+
+  useEffect(() => {
+    if (type === "now_playing") {
+      setMoviesData(movies);
+    } else if (type === "popular") {
+      setMoviesData(popularMovies);
+    }
+  }, [movies, popularMovies]);
+
   const store = useAppStore();
   const initialized = useRef(false);
 
   // store.dispatch(clearState());
-  if (!data) {
+  if (!moviesData.data) {
     if (!initialized.current) {
-      store.dispatch(fetchMovie(currentPage));
+      store.dispatch(fetchMovie({ type: type, page: moviesData.currentPage }));
       initialized.current = true;
     }
   }
@@ -34,8 +55,15 @@ export default function MovieList() {
         target.scrollHeight - (target.scrollTop + target.clientHeight)
       );
       if (reachedBottom <= 1) {
-        store.dispatch(fetchMovie(currentPage + 1));
-        store.dispatch(updateCurrentPage(currentPage + 1));
+        store.dispatch(
+          fetchMovie({ type: type, page: moviesData.currentPage + 1 })
+        );
+        store.dispatch(
+          updateCurrentPage({
+            type: type,
+            currentPage: moviesData.currentPage + 1,
+          })
+        );
       }
     }
 
@@ -45,11 +73,11 @@ export default function MovieList() {
   return (
     <>
       <div
-        className="flex flex-wrap gap-4 h-vh-70 overflow-auto"
+        className="flex flex-wrap gap-4 h-[80vh] overflow-auto"
         onScroll={handleOnScroll}
       >
-        {data &&
-          data.results.map((movie: MovieInfo, index: number) => (
+        {moviesData.data &&
+          moviesData.data.results.map((movie: MovieInfo, index: number) => (
             <div key={`${index}_${movie.id}`} className="card">
               <MovieCard movieData={movie} />
             </div>

@@ -10,7 +10,7 @@ export default function MovieTabs() {
     <>
       <Tabs aria-label="Default tabs" variant="default">
         <Tabs.Item active title="TheMovieDb movies" icon={SiThemoviedatabase}>
-          <MovieList />
+          <MovieList type="now_playing" />
         </Tabs.Item>
         <Tabs.Item title="User-submitted movies" icon={MdMovie}></Tabs.Item>
       </Tabs>
