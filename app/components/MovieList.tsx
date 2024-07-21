@@ -31,7 +31,7 @@ export default function MovieList(props: Props) {
     } else if (type === "popular") {
       setMoviesData(popularMovies);
     }
-  }, [movies, popularMovies]);
+  }, [movies, popularMovies, type]);
 
   const store = useAppStore();
   const initialized = useRef(false);
