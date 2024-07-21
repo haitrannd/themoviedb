@@ -124,7 +124,7 @@ export default function Navigation() {
           </NavbarLink>
           <NavbarLink
             as={Link}
-            href="/user/submit-movie"
+            href="/user/submitted-movie"
             className="text-white hover:text-amber-400 md:hover:text-amber-400 transition-all"
           >
             Submit movie
