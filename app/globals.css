@@ -52,3 +52,9 @@ body {
     }
   }
 }
+
+.submitted-list {
+  img {
+    object-fit: cover !important;
+  }
+}

@@ -1,9 +1,17 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Button, Checkbox, Label, TextInput } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { Button, Label, TextInput, FileInput } from "flowbite-react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { message } from "antd";
+import { db } from "@/app/firebaseConfig";
+import { collection, addDoc } from "firebase/firestore";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadString,
+} from "firebase/storage";
 
 type Inputs = {
   poster_path: string;
@@ -11,10 +19,63 @@ type Inputs = {
   overview: string;
   genres: string;
   popularity: string;
+  poster: File;
 };
 
 export default function UserSumittedMovie() {
   const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
+  const [imgUrl, setImgUrl] = useState("");
+
+  const readImg = (e: ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (e.target.files) reader.readAsDataURL(e.target.files[0]);
+    reader.onload = (readerEvent: any) => {
+      setImgUrl(readerEvent.target.result);
+    };
+  };
+
+  const uploadFileToFirebase = async (name: string, imgUrl: string) => {
+    const storage = getStorage();
+    const storageRef = ref(storage, "images/" + name);
+    try {
+      await uploadString(storageRef, imgUrl, "data_url");
+      const downloadUrl = await getDownloadURL(storageRef);
+      return downloadUrl;
+    } catch (error) {
+      console.log(error);
+      return "";
+    }
+  };
+
+  const addDataToFireStore = async ({
+    original_title,
+    overview,
+    genres,
+    popularity,
+  }: {
+    original_title: string;
+    overview: string;
+    genres: string;
+    popularity: string;
+  }) => {
+    try {
+      let downloadUrl = "";
+      if (imgUrl) {
+        downloadUrl = await uploadFileToFirebase(original_title, imgUrl);
+      }
+      const docRef = await addDoc(collection(db, "submitted_movies"), {
+        original_title,
+        overview,
+        genres,
+        popularity,
+        poster_path: downloadUrl,
+      });
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
 
   const {
     register,
@@ -22,8 +83,9 @@ export default function UserSumittedMovie() {
     reset,
     formState: { errors },
   } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const { poster_path, original_title, overview, genres, popularity } = data;
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const { original_title, overview, genres, popularity } = data;
+
     let genreArray = genres.split(`,`);
     let formattedGenres = [];
     for (let i in genreArray) {
@@ -32,37 +94,17 @@ export default function UserSumittedMovie() {
         name: genreArray[i].trim(),
       });
     }
+    const formattedGenresString = JSON.stringify(formattedGenres);
 
-    const submittedMovies = localStorage.getItem("submitted_movies");
-    if (!submittedMovies) {
-      let submittedMoviesArray = [];
-      submittedMoviesArray.push({
-        poster_path,
-        original_title,
-        overview,
-        genres: formattedGenres,
-        popularity,
-      });
-      localStorage.setItem(
-        "submitted_movies",
-        JSON.stringify(submittedMoviesArray)
-      );
-    } else {
-      let submittedMoviesArray = JSON.parse(submittedMovies);
-      submittedMoviesArray.push({
-        poster_path,
-        original_title,
-        overview,
-        genres: formattedGenres,
-        popularity,
-      });
-      localStorage.setItem(
-        "submitted_movies",
-        JSON.stringify(submittedMoviesArray)
-      );
+    const added = await addDataToFireStore({
+      original_title,
+      overview,
+      genres: formattedGenresString,
+      popularity,
+    });
+    if (added) {
+      setIsSubmitSuccessful(true);
     }
-
-    setIsSubmitSuccessful(true);
   };
 
   useEffect(() => {
@@ -81,14 +123,7 @@ export default function UserSumittedMovie() {
         <div className="mb-2 block">
           <Label htmlFor="poster_path" value="Movie poster path" />
         </div>
-        <TextInput
-          id="poster_path"
-          type="text"
-          placeholder="Poster path"
-          required
-          defaultValue={`https://image.tmdb.org/t/p/original/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg`}
-          {...register("poster_path")}
-        />
+        <FileInput id="poster" {...register("poster")} onChange={readImg} />
       </div>
       <div>
         <div className="mb-2 block">

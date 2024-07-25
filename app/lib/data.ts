@@ -54,7 +54,10 @@ export async function getDetailMovie(id: number) {
 
   try {
     const res = await fetch(api, options);
-    const data = await res.json();
+    let data = await res.json();
+    if (data.poster_path) {
+      data.poster_path = process.env.SMALL_IMG_PREFIX + data.poster_path;
+    }
     return data;
   } catch (error) {
     throw new Error("Something happened! Please try again later!");
