@@ -3,6 +3,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { MovieListing } from "../../type";
 import { getMovieList } from "../../data";
+import { collection, DocumentData, getDocs, query } from "firebase/firestore";
+import { db } from "@/app/firebaseConfig";
 
 export interface movieState {
   movies: {
@@ -14,7 +16,7 @@ export interface movieState {
     currentPage: number;
   };
   submittedMovies: {
-    data: MovieListing | null;
+    data: MovieListing | null | DocumentData;
     currentPage: number;
   };
   isLoading: boolean;
@@ -32,8 +34,20 @@ export const fetchMovie = createAsyncThunk(
 
 export const fetchSubmittedMovie = createAsyncThunk(
   "fetchSubmittedMovie",
-  async (page: number) => {
-    const data = await getMovieList("popular", page);
+  async () => {
+    const data: DocumentData[] = [];
+    const getMovieData = (): Promise<void> => {
+      return new Promise(async (resolve) => {
+        const q = query(collection(db, "submitted_movies"));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          data.push(doc.data());
+        });
+        return resolve();
+      });
+    };
+
+    await getMovieData();
     return data;
   }
 );
@@ -60,12 +74,13 @@ export const movieReducer = createSlice({
   initialState,
   reducers: {
     updateCurrentPage: (state, action) => {
+      console.log(action);
       if (action.payload) {
         const type = action.payload.type;
-        const nextPage = action.payload.nextPage;
-        if (type === "movies") {
+        const nextPage = action.payload.currentPage;
+        if (type === "now_playing") {
           state.movies.currentPage = nextPage;
-        } else if (type === "popularMovies") {
+        } else if (type === "popular") {
           state.popularMovies.currentPage = nextPage;
         }
       }
@@ -109,6 +124,18 @@ export const movieReducer = createSlice({
         state.isLoading = false;
       })
       .addCase(fetchMovie.rejected, (state) => {
+        state.isLoading = false;
+      })
+
+      // Submitted movies
+      .addCase(fetchSubmittedMovie.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchSubmittedMovie.fulfilled, (state, action) => {
+        state.submittedMovies.data = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(fetchSubmittedMovie.rejected, (state) => {
         state.isLoading = false;
       });
   },

@@ -36,13 +36,17 @@ export default function MovieList(props: Props) {
   const store = useAppStore();
   const initialized = useRef(false);
 
-  // store.dispatch(clearState());
-  if (!moviesData.data) {
-    if (!initialized.current) {
-      store.dispatch(fetchMovie({ type: type, page: moviesData.currentPage }));
-      initialized.current = true;
+  useEffect(() => {
+    // store.dispatch(clearState());
+    if (!moviesData.data) {
+      if (!initialized.current) {
+        store.dispatch(
+          fetchMovie({ type: type, page: moviesData.currentPage })
+        );
+        initialized.current = true;
+      }
     }
-  }
+  }, []);
 
   let lastScrollTop = 0;
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
@@ -73,15 +77,22 @@ export default function MovieList(props: Props) {
   return (
     <>
       <div
-        className="flex flex-wrap gap-4 h-[80vh] overflow-auto"
+        className="flex flex-wrap gap-4 h-[65vh] overflow-auto"
         onScroll={handleOnScroll}
       >
         {moviesData.data &&
-          moviesData.data.results.map((movie: MovieInfo, index: number) => (
-            <div key={`${index}_${movie.id}`} className="card">
-              <MovieCard movieData={movie} />
-            </div>
-          ))}
+          moviesData.data.results.map((movie: MovieInfo, index: number) => {
+            const formattedMovie = JSON.stringify(movie);
+            const copiedMovie = JSON.parse(formattedMovie) as MovieInfo;
+            copiedMovie.poster_path =
+              process.env.SMALL_IMG_PREFIX + movie.poster_path;
+
+            return (
+              <div key={`${index}_${movie.id}`} className="card">
+                <MovieCard movieData={copiedMovie} />
+              </div>
+            );
+          })}
       </div>
     </>
   );

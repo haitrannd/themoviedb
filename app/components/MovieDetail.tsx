@@ -9,10 +9,10 @@ export default function MovieDetail(props: Props) {
   const { movieData } = props;
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row shadow-md rounded-[10px] overflow-hidden">
       <div className="w-100 h-[calc((100vw-40px)*3/2)] md:w-[20rem] md:h-[30rem] relative">
         <Image
-          src={process.env.SMALL_IMG_PREFIX + movieData.poster_path}
+          src={movieData.poster_path}
           alt={movieData.original_title}
           style={{ objectFit: "contain" }}
           fill
@@ -26,13 +26,17 @@ export default function MovieDetail(props: Props) {
         </p>
         <p className="pb-4">
           <b>Genres: </b>
-          {movieData.genres.map(
-            (genre: { id: number; name: string }, index: number) => {
-              if (index !== movieData.genres.length - 1)
-                return <span key={genre.id}>{`${genre.name}, `}</span>;
-              else return <span key={genre.id}>{genre.name}</span>;
-            }
-          )}
+          {Array.isArray(movieData.genres) &&
+            movieData.genres.map(
+              // (genre: { id: number; name: string }, index: number) => {
+              //   if (index !== movieData.genres.length - 1)
+              //     return <span key={genre.id}>{`${genre.name}, `}</span>;
+              //   else return <span key={"last_" + genre.id}>{genre.name}</span>;
+              // }
+              (genre: { id: number; name: string }, index: number) => (
+                <span key={index}>{genre.name + " | "}</span>
+              )
+            )}
         </p>
         <p className="pb-4">
           <b>Release date:</b> {movieData.release_date}

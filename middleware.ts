@@ -9,9 +9,10 @@ export async function middleware(request: NextRequest) {
     if (
       request.nextUrl.pathname.startsWith("/user/profile") ||
       request.nextUrl.pathname.startsWith("/user/logout") ||
+      request.nextUrl.pathname.startsWith("/user/submitted-movie") ||
       request.nextUrl.pathname.startsWith("/movies/popular")
     ) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/?l=false", request.url));
     }
   }
 
@@ -23,5 +24,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/user/profile", "/user/login", "/user/logout"],
+  matcher: [
+    "/user/profile",
+    "/user/login",
+    "/user/logout",
+    "/user/submitted-movie",
+    "/movies/popular",
+  ],
 };
